@@ -1,0 +1,215 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Object Detection</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+    <h1>Object Detection System</h1>
+
+    <form id="upload-form_image" action="/upload_images/" method="post" enctype="multipart/form-data">
+        <div>
+            <label for="image">Upload Image:</label>
+            <input type="file" id="image" name="files" accept=".jpg,.jpeg,.png" multiple style="display: none;">
+            <button type="button" onclick="document.getElementById('image').click();">Choose File(s)</button>
+            <span id="image-file-count">0 files selected</span>
+        </div>
+
+        <button type="submit" class="upload-button">Upload_image</button>
+
+        <div id="spinner_image" class="spinner"></div> <!-- Спиннер -->
+
+    </form>
+
+    <form id="upload-form_video" action="/upload_video/" method="post" enctype="multipart/form-data">
+        <div>
+            <label for="video">Upload Video:</label>
+            <input type="file" id="video" name="file" accept=".mp4,.avi" style="display: none;">
+            <button type="button" onclick="document.getElementById('video').click();">Choose File</button>
+            <span id="video-file-count">0 files selected</span>
+        </div>
+
+        <button type="submit" class="upload-button">Upload_video</button>
+
+        <div id="spinner_video" class="spinner"></div> <!-- Спиннер -->
+
+    </form>
+
+    <style>
+        .center {
+            text-align: center;
+        }
+    </style>
+
+    <h2 class="center"> Get prediction </h2>
+
+    <form id="detect-form" action="/detect_objects/" method="post" enctype="multipart/form-data">
+        <button type="submit">Detect Objects</button>
+        <div id="spinner_detect" class="spinner"></div> <!-- Спиннер -->
+
+    </form>
+
+    <form id="clear-form" action="/clear_folders/" method="post">
+        <button type="submit">Clear Folders</button>
+    </form>
+
+    <form action="/download_results/" method="get">
+        <button type="submit">Download Results</button>
+    </form>
+
+    <h1>Detection Results</h1>
+    <div id="results">
+        {% for file in result_files %}
+            <div class="result-item">
+                <h2>{{ file }}</h2>
+                <video controls src="/results/{{ file.split('.')[0] }}_output.mp4"></video>
+                <div id="timeline-{{ file.split('.')[0] }}"></div>
+                <button onclick="loadTimeline('{{ file }}')">Show Timeline</button>
+            </div>
+        {% endfor %}
+    </div>
+
+
+    <script>
+
+        document.getElementById('upload-form_image').addEventListener('submit', function (event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            const spinner_im = document.getElementById('spinner_image');
+            spinner_im.style.display = 'inline-block'; // Показываем спиннер
+
+            fetch('/upload_images/', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                spinner_im.style.display = 'none'; // Скрываем спиннер после завершения операции
+                if (data.message) {
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                spinner_im.style.display = 'none'; // Скрываем спиннер в случае ошибки
+                console.error('Error:', error);
+            });
+        });
+
+        document.getElementById('upload-form_video').addEventListener('submit', function (event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            const spinner_vid = document.getElementById('spinner_video');
+            spinner_vid.style.display = 'inline-block'; // Показываем спиннер
+
+            fetch('/upload_video/', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                spinner_vid.style.display = 'none'; // Скрываем спиннер после завершения операции
+                if (data.message) {
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                spinner_vid.style.display = 'none'; // Скрываем спиннер в случае ошибки
+                console.error('Error:', error);
+            });
+        });
+
+
+        document.getElementById('detect-form').addEventListener('submit', function (event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            const spinner_det = document.getElementById('spinner_detect');
+            spinner_det.style.display = 'inline-block'; // Показываем спиннер
+            fetch('/detect_objects/', {
+                method: 'POST',
+                body: formData
+            }).then(response => response.json())
+              .then(data => {
+                  spinner_det.style.display = 'none'; // Скрываем спиннер в случае ошибки
+                  if (data.message) {
+                      alert(data.message);
+                  }
+                  fetchResults();  // Update results list
+              });
+        });
+
+        document.getElementById('clear-form').addEventListener('submit', function (event) {
+            event.preventDefault();
+            fetch('/clear_folders/', {
+                method: 'POST'
+            }).then(response => response.json())
+              .then(data => {
+                  if (data.message) {
+                      alert(data.message);
+                  }
+                  fetchResults();  // Update results list
+              });
+        });
+
+        // Функция для обновления количества выбранных файлов
+        function updateFileCount(inputElement, countElement) {
+            const fileCount = inputElement.files.length;
+            countElement.textContent = `${fileCount} files selected`;
+        }
+
+        // Обработчики событий для кнопок выбора файлов
+        document.getElementById('image').addEventListener('change', function () {
+            updateFileCount(this, document.getElementById('image-file-count'));
+        });
+
+        document.getElementById('video').addEventListener('change', function () {
+            updateFileCount(this, document.getElementById('video-file-count'));
+        });
+
+        function fetchResults() {
+            fetch('/show_results/')
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('results').innerHTML = html;
+                });
+        }
+
+        function playVideo(file, timestamp) {
+            const videoContainer = document.getElementById('video-container');
+            videoContainer.innerHTML = `<video controls src="/play_video/?file=${file}#t=${timestamp}"></video>`;
+        }
+
+        function loadTimeline(file) {
+            fetch(`/get_timeline/?file=${file}`)
+                .then(response => response.json())
+                .then(data => {
+                    const timeline = document.getElementById(`timeline-${file.split('.')[0]}`);
+                    timeline.innerHTML = ''; // Clear existing timeline
+
+                    data.timeline.forEach((timestamp, index) => {
+                        const marker = document.createElement('div');
+                        marker.classList.add('timeline-marker');
+                        if (index % 2 === 0) {
+                            marker.classList.add('threat');
+                        }
+                        marker.innerText = timestamp;
+                        marker.onclick = () => {
+                            const video = document.querySelector(`video[src='/results/${file.split('.')[0]}_output.mp4']`);
+                            video.currentTime = timestampToSeconds(timestamp);
+                        };
+                        timeline.appendChild(marker);
+                    });
+                });
+        }
+
+        function timestampToSeconds(timestamp) {
+            const parts = timestamp.split(':');
+            return parseInt(parts[0], 10) * 3600 + parseInt(parts[1], 10) * 60 + parseInt(parts[2], 10);
+        }
+
+        fetchResults();
+    </script>
+</body>
+</html>

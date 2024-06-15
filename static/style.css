@@ -1,0 +1,135 @@
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 40px;
+}
+
+h1 {
+    text-align: center;
+}
+
+form {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 10px;
+}
+
+button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px; /* Добавлено для отступа между кнопками */
+}
+
+/* Стили для кнопок при наведении */
+button:hover {
+    background-color: #45a049; /* Цвет фона при наведении */
+}
+
+/* Добавлено для отступа между кнопками */
+button:not(:last-child) {
+    margin-right: 10px;
+}
+
+/* Стиль для кнопки Upload */
+.upload-button {
+    margin-top: 10px; /* Отступ вниз */
+    background-color: #FFA500; /* Оранжевый цвет */
+}
+
+.upload-button:hover {
+    background-color: #FF8C00; /* Цвет при наведении */
+}
+
+
+.spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-left-color: #4CAF50;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    animation: spin 1s linear infinite;
+    margin-left: 5px;
+    display: none; /* Начинает скрытым */
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+h1 {
+    color: #333;
+    text-align: center;
+}
+
+form {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+}
+
+form div {
+    margin-bottom: 10px;
+}
+
+label {
+    font-weight: bold;
+    display: block;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+#timeline {
+    margin: 20px auto;
+    padding: 20px;
+    max-width: 600px;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.timeline-marker {
+    display: inline-block;
+    margin: 5px;
+    padding: 5px 10px;
+    background-color: #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.timeline-marker.threat {
+    background-color: #ff0000; /* Красный цвет для угроз */
+}
+
+.timeline-marker:hover {
+    background-color: #bbb;
+}
+
+#video-container {
+    text-align: center;
+    margin: 20px auto;
+    max-width: 600px;
+}

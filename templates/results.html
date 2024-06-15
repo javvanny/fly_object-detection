@@ -1,0 +1,13 @@
+
+<head>
+    <meta charset="UTF-8">
+    <title>Detection Results</title>
+</head>
+<body>
+    <ul>
+        {% for file in result_files %}
+        <li><a href="/results/{{ file }}" target="_blank">{{ file }}</a></li>
+        {% endfor %}
+    </ul>
+</body>
+
