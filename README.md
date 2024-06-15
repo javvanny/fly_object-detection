@@ -105,28 +105,31 @@ Shows the progress of detection processing.
 3. Downloads a zip file containing all detection results.
 
 ## Project Structure
+
 ├── main.py
 
 ├── requirements.txt
 
 ├── templates
 
-   ├── index.html
+│   ├── index.html
 
-    └── results.html
+│   └── results.html
+
 ├── static
-  
-   └── ...
+
+│   └── ...
 
 ├── uploads
 
 ├── results
 
 └── yolov8m
-  
-  └── weights
-   
-    └── best.pt
+
+    └── weights
+    
+        └── best.pt
+        
 ## Contributing
 
 Contributions are welcome! Please open an issue or submit a pull request.
